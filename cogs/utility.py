@@ -145,7 +145,8 @@ class Utility:
     async def cmdprefix(self, ctx, *, msg):
         """Set your command prefix for normal commands. Requires a reboot."""
         write_config_value("config", "cmd_prefix", msg)
-        await ctx.send(self.bot.bot_prefix + 'Prefix changed. Use `restart` to reboot the bot for the updated prefix.')
+        await ctx.send(self.bot.bot_prefix + 'Prefix changed. The updated prefix will take effect from now.')
+        self.bot.command_prefix = msg # a little hacky but it works
 
     @commands.command(pass_context=True)
     async def customcmdprefix(self, ctx, *, msg):
@@ -207,9 +208,9 @@ class Utility:
         await msg.edit(content=':boom:')
         await asyncio.sleep(.5)
         await killmsg.edit(content=':fire:')
+        await msg.delete()
         await asyncio.sleep(.5)
         await killmsg.delete()
-        await msg.delete()
 
 
     @commands.command(aliases=['d'], pass_context=True)
@@ -290,7 +291,7 @@ class Utility:
     @commands.command(pass_context=True)
     async def uni(self, ctx, *, msg: str):
         """Convert to unicode emoji if possible. Ex: [p]uni :eyes:"""
-        await ctx.send("`" + msg.replace("`", "") + "`")
+        await ctx.send("\\" + ' \\'.join(msg.replace("`", "").split(' '))) # yes this works
 
     @commands.command(pass_context=True, aliases=['source'])
     async def sauce(self, ctx, *, txt: str = None):
@@ -652,12 +653,12 @@ class Utility:
             await asyncio.sleep(1)  # Prevent spaminess
 
     @commands.has_permissions(add_reactions=True)
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True,aliases=['rpoll'])
     async def poll(self, ctx, *, msg):
         """Create a poll using reactions. [p]help poll for more information.
-        [p]poll <question> | <answer> | <answer> - Create a poll. You may use as many answers as you want, placing a pipe | symbol in between them.
+        [p]poll <question> | <answer> | <answer> - Create a poll. You may use as many answers as you want, placing a pipe (|) symbol in between them.
         Example:
-        [p]poll What is your favorite anime? | Steins;Gate | Naruto | Attack on Titan | Shrek
+        [p]poll What is your favourite anime? | Steins;Gate | Naruto | Attack on Titan | Shrek
         You can also use the "time" flag to set the amount of time in seconds the poll will last for.
         Example:
         [p]poll What time is it? | HAMMER TIME! | SHOWTIME! | time=10
